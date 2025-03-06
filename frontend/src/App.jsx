@@ -1,6 +1,13 @@
 import React, { useEffect, useState} from 'react'
-
+import Login from './Login.jsx';
 function App() {
+  return(
+    <div>
+      <Login />
+    </div>
+    
+  )
+  /*
   const[data,setData]=useState([]);
   useEffect(()=>{
     fetch('http://localhost:3000/')
@@ -22,6 +29,7 @@ function App() {
       
     </div>
   );
+  */
 }
 
 
