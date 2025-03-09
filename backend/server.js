@@ -1,11 +1,14 @@
-const express=require('express')
-const mysql=require('mysql')
-const cors=require('cors')
-const app=express()
-const user=require('./routes/users')
-app.set("view engine", "ejs")
-app.use(cors())
-app.use(express.urlencoded({extended:true}))
+const express=require('express');
+
+//onsole.log(express);
+const mysql=require('mysql');
+//Console.log(mysql);
+const cors=require('cors');
+const app=express();
+app.use(express.json());
+
+app.use(cors());
+app.use(express.urlencoded({extended:true}));
 
 const db= mysql.createConnection({
     host:"localhost",
@@ -26,6 +29,28 @@ app
         }
     })
 })
+.post((req,res)=>{
+    const sql="Select * from user_details";
+    const values=[req.body.username,req.body.password]
+    
+    db.query(sql,[req.body.username,req.body.password],(err,data)=>{
+        if (err) return res.json(0);
+        else{
+            flag=0;
+            data.forEach((user,sl) => {
+                
+                if (user.username==req.body.username && user.pass==req.body.password){
+                    flag=1;
+                }
+                
+            });
+            if(flag==1){
+                return res.json(1);
+            }
+            return res.json(0);
+            
+        }}
+    )
+})
 
-app.use('/users',user)
-app.listen(3000)
+app.listen(1234);
