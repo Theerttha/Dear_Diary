@@ -1,12 +1,26 @@
-import React, { useEffect, useState} from 'react'
-import Login from './Login.jsx';
-function App() {
-  return(
-    <div>
-      <Login />
-    </div>
-    
-  )
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./Login";
+import Register from "./Register";
+import Notes from "./Notes";
+import Categories from "./Categories";
+import Thoughts from "./Thoughts";
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/notes" element={<Notes />} />
+                <Route path="/thoughts" element={<Thoughts />} />
+                <Route path="/categories" element={<Categories />} />
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
+
   /*
   const[data,setData]=useState([]);
   useEffect(()=>{
@@ -30,7 +44,4 @@ function App() {
     </div>
   );
   */
-}
 
-
-export default App
