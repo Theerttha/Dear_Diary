@@ -1,80 +1,72 @@
-import React,{useEffect, useState} from 'react'
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const Categories=()=>{
-    const navigate = useNavigate();
-    const [data,getData]=useState('');
-    const [cat,getCat]=useState('');
-    const handleLogout = async () => {
-        try {
-            await axios.post("http://localhost:1234/logout", { withCredentials: true });
-            
-        } catch (error) {
-            console.log("Logout failed", error);
-        }
-    }
-    const get_data=async()=>{
-        try{
-            const response=await axios.get(("http://localhost:1234/categories"), { withCredentials: true });
-            console.log("Session Response:", response.data);
-            getData(response.data);
+import Navbar from "./Navbar.jsx";
+const Categories = () => {
+  const navigate = useNavigate();
+  const [CatData, setCatData] = useState([]); // Initialize as array
+  const [newCategory, setNewCategory] = useState(""); // State for input
 
-        }catch (error) {
-            console.log("Session Check Failed", error);
-            
-        }
+
+  const get_data = async () => {
+    try {
+      const response = await axios.get("http://localhost:1234/categories", { withCredentials: true });
+      console.log("Fetched Categories:", response.data);
+      setCatData(response.data); // ✅ Ensure setting as an array
+    } catch (error) {
+      console.log("Error fetching categories", error);
     }
-    const postCat= async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post(
-                "http://localhost:1234/categories/",
-                { cat },
-                { withCredentials: true } 
-            );
-            console.log(response.data);
-        } catch (error) {
-            console.log("Login Error:", error);
-        }
-    };
-    useEffect(()=>{
-        get_data();
-    },[])
-    return(
+  };
+
+  const postCat = async (event) => {
+    event.preventDefault();
+    try {
+      await axios.post(
+        "http://localhost:1234/categories/",
+        { cat: newCategory }, // ✅ Corrected payload
+        { withCredentials: true }
+      );
+      setNewCategory(""); // Clear input after submission
+      get_data(); // ✅ Refresh categories list
+    } catch (error) {
+      console.log("Error adding category:", error);
+    }
+  };
+
+  useEffect(() => {
+    get_data();
+  }, []);
+
+  return (
+    <div>
+        <Navbar />
+      <div className="cats">
+        {/* ✅ Corrected Mapping */}
         <div>
-            <div className="navbar">
-                <button onClick={()=>{
-                    navigate("/categories");
-                }}>
-                    Categories
-                </button>
-                <button onClick={()=>{
-                    navigate("/thoughts");
-                }}>
-                    Thoughts
-                </button>
-                <button onClick={()=>{
-                    handleLogout();
-                    navigate("/");
-                }}>
-                    Logout
-                </button>
-            </div>
-            <div className="cats">
-                <div>
-                    {data}
-                </div>
-               <div>
-                <form onSubmit={postCat}>
-                    <input type="text" placeholder='Type in category' onChange={(e) => getCat(e.target.value)} />
-                    <button type="submit">
-                        Enter
-                    </button>
-                </form>
-                </div>
-               
-            </div>
+          {Array.isArray(CatData) ? (
+            CatData.map((item, index) => (
+              <div key={index}>{item.category}</div> // ✅ Access the `category` field
+            ))
+          ) : (
+            <p>Loading categories...</p>
+          )}
         </div>
-    )
-}
+
+        {/* Category Input Form */}
+        <div>
+          <form onSubmit={postCat}>
+            <input 
+              type="text" 
+              value={newCategory} // 
+              placeholder="Type in category"
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <button type="submit">Enter</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default Categories;

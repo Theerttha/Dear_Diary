@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Res from "./Notes.jsx";
-import Register from "./Register.jsx"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const Login = () => {
@@ -88,20 +86,25 @@ const Login = () => {
 
             {loginstatus === 0 &&(
                 <div>
-                 <div>Login Failed</div>
-                 <form onSubmit={handleSub}>
-                 <label>
-                     <h1>Username</h1>
-                 </label>
-                 <input type="text" name="username" onChange={(e) => setUsername(e.target.value)} />
-                 <label>
-                     <h1>Password</h1>
-                 </label>
-                 <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} />
-                 <button type="submit">Login</button>
-                 </form>
+                    <div>Login Failed</div>
+                    <form onSubmit={handleSub}>
+                    <label>
+                        <h1>Username</h1>
+                    </label>
+                    <input type="text" name="username" onChange={(e) => setUsername(e.target.value)} />
+                    <label>
+                        <h1>Password</h1>
+                    </label>
+                    <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} />
+                    <button type="submit">Login</button>
+                    </form>
+                
+                    <div>
+                    If not registered
+                    <button  onClick={() => navigate("/register")}>Register</button>
+                    </div>
                 </div>
-             
+        
              )}
 
         </div>
