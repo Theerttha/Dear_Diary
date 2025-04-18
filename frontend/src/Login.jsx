@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loginstatus, setLogin] = useState(null);
-    const [registerStatus,setRegister]=useState(null);
+    const [color, setColor] = useState("#ffffff");
     const navigate = useNavigate();
+
     const handleSub = async (event) => {
         event.preventDefault();
         try {
@@ -16,7 +18,8 @@ const Login = () => {
                 { withCredentials: true } 
             );
             console.log(response.data);
-            setLogin(response.data);
+            setColor(response.data);
+            setLogin(1);
         } catch (error) {
             console.log("Login Error:", error);
         }
@@ -26,10 +29,9 @@ const Login = () => {
         try {
             const response = await axios.get("http://localhost:1234/login", { withCredentials: true });
             console.log("Session Response:", response.data);
-            if (response.data===null){
+            if (response.data === null) {
                 setLogin(null);
-            }
-            else {
+            } else {
                 setLogin(1);
             }
         } catch (error) {
@@ -42,7 +44,6 @@ const Login = () => {
         setLogin(null);
         try {
             await axios.post("http://localhost:1234/logout", { withCredentials: true });
-            
         } catch (error) {
             console.log("Logout failed", error);
         }
@@ -50,18 +51,20 @@ const Login = () => {
 
     useEffect(() => {
         checkSession();
-    }, []); 
+    }, []);
+
     useEffect(() => {
         if (loginstatus === 1) {
-            navigate("/notes"); // ✅ Redirect when loginstatus is 1
+            navigate("/notes", { state: { username: username,color:color} });
         }
     }, [loginstatus, navigate]);
+
     console.log(loginstatus);
+
     return (
         <div className="main">
-            {loginstatus ===null && (
+            {loginstatus === null && (
                 <div>
-
                     <form onSubmit={handleSub}>
                         <label>
                             <h1>Username</h1>
@@ -74,39 +77,42 @@ const Login = () => {
                         <button type="submit">Login</button>
                     </form>
 
-                        <div>
-                            If not registered
-                            <button  onClick={() => navigate("/register")}>Register</button>
-                        </div>
-                    
+                    <div>
+                        If not registered
+                        <button onClick={() => navigate("/register")}>Register</button>
+                    </div>
 
+                    <div>
+                        <button onClick={() => navigate("/forgotpassword")}>Forgot Password?</button>
+                    </div>
                 </div>
             )}
 
-
-            {loginstatus === 0 &&(
+            {loginstatus === 0 && (
                 <div>
                     <div>Login Failed</div>
                     <form onSubmit={handleSub}>
-                    <label>
-                        <h1>Username</h1>
-                    </label>
-                    <input type="text" name="username" onChange={(e) => setUsername(e.target.value)} />
-                    <label>
-                        <h1>Password</h1>
-                    </label>
-                    <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} />
-                    <button type="submit">Login</button>
+                        <label>
+                            <h1>Username</h1>
+                        </label>
+                        <input type="text" name="username" onChange={(e) => setUsername(e.target.value)} />
+                        <label>
+                            <h1>Password</h1>
+                        </label>
+                        <input type="password" name="password" onChange={(e) => setPassword(e.target.value)} />
+                        <button type="submit">Login</button>
                     </form>
-                
+
                     <div>
-                    If not registered
-                    <button  onClick={() => navigate("/register")}>Register</button>
+                        If not registered
+                        <button onClick={() => navigate("/register")}>Register</button>
+                    </div>
+
+                    <div>
+                        <button onClick={() => navigate("/forgotpassword")}>Forgot Password?</button>
                     </div>
                 </div>
-        
-             )}
-
+            )}
         </div>
     );
 };

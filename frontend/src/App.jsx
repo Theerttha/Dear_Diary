@@ -5,6 +5,9 @@ import Register from "./Register";
 import Notes from "./Notes";
 import Categories from "./Categories";
 import Thoughts from "./Thoughts";
+
+import ForgotPassword from "./ForgotPassword";
+import Profile from "./Profile";
 const App = () => {
     return (
         <Router>
@@ -14,6 +17,9 @@ const App = () => {
                 <Route path="/notes" element={<Notes />} />
                 <Route path="/thoughts" element={<Thoughts />} />
                 <Route path="/categories" element={<Categories />} />
+
+                <Route path="/forgotpassword" element={<ForgotPassword />} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </Router>
     );

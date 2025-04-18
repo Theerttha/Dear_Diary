@@ -1,10 +1,15 @@
 const express=require('express');
+const session = require("express-session");
 const mysql=require('mysql');
 const cors=require('cors');
-const session = require("express-session");
+const router=express.Router()
 const app=express();
 
-app.use(express.json());
+
+
+const db = require("./db");
+
+
 app.use(
     cors({
       origin: "http://localhost:5173", // Allow frontend
@@ -13,6 +18,7 @@ app.use(
       allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
     })
   );
+app.use(express.json());
 app.use(express.urlencoded({extended:true}),)
 app.use(
     session({
@@ -27,139 +33,22 @@ app.use(
 
     })
 );
-app.use((req, res, next) => {
-    res.locals.session = req.session;
-    next();
-});
 
-const db= mysql.createConnection({
-    host:"localhost",
-    user:"root",
-    password:"Vanilla333#",
-    database:"test1"
-})
-app
-.route("/login")
-.get((req,res)=>{
-    if(req.user){
-        console.log("/"+req.session.user.username);
-        return res.json(req.session.user.username);
-    }
-    return res.json(null); 
-})
-.post((req,res)=>{
-    db.query("Create table if not exists user_details(sl int primary key auto_increment,username varchar(20) unique,pass varchar(20));"),(err,result)=>{
-        if(err){
-            console.error("Error creating table:", err);
-            return res.json(0);
-        }
-    }
-    const sql="Select * from user_details where username like ? and pass like ?";
-    db.query(sql,[req.body.username,req.body.password],(err,data)=>{
-        if (err) return res.json(0);
-        else{
-            if (data.length>0){
-                req.session.user={username:req.body.username};
-                console.log(req.session.user);
-                return res.json(1);
-            }
-                
-        }
-        return res.json(0);
-            
-        
-})
-})
-app.route('/logout')
-.post((req,res)=>{
-    req.session.user={username:null};
-})
-app.route('/register')
-.post((req,res)=>{
-    db.query("Create table if not exists user_details(sl int primary key auto_increment,username varchar(20) unique,pass varchar(20));"),(err,result)=>{
-        if(err){
-            console.error("Error creating table:", err);
-            return res.json(0);
-        }
-    }
-    const sql = "INSERT INTO user_details (username, pass) VALUES (?, ?)";
-    
-    db.query(sql, [req.body.username, req.body.password], (err, result) => {
-        if (err) {
-            console.error("Error inserting data:", err);
-            return res.json(0);
-        }
-        return res.json(1);
-    });
-})
-app.route('/categories')
-.get((req,res)=>{
-    db.query("create table if not exists categories(sl int primary key auto_increment,category varchar(20),userid varchar(20));"),(err,result)=>{
-        if(err){
-            console.error("Error creating table:", err);
-            return res.json(0);
-        }
-    }
-    const sql="Select category from categories where userid=?";
-    db.query(sql,(req.session.user.username),(err,results)=>{
-        if(err){
-            console.error(err);
-            return res.json(0);
-        }
-        res.json(results);
-    })
-})
-.post((req,res)=>{
-    db.query("create table if not exists categories(sl int primary key auto_increment,category varchar(20),userid varchar(20));"),(err,result)=>{
-        if(err){
-            console.error("Error creating table:", err);
-            return res.json(0);
-        }
-    }
-    const sql="Insert into categories(category,userid) values(?,?)";
-    console.log(req.session.user.username);
-    console.log(req.body.cat);
-    db.query(sql,[req.body.cat,req.session.user.username],(err,result)=>{
-        if(err){
-            console.error("Error inserting data:", err);
-            return res.json(0);
-        }
-        return res.json(1);
-    })
-})
-app.route('/thoughts')
-.get((req,res)=>{
-    db.query("create table if not exists thoughts(sl int primary key auto_increment,thought varchar(20),userid varchar(20),updatetime datetime);"),(err,result)=>{
-        if(err){
-            console.error("Error creating table:", err);
-            return res.json(0);
-        }
-    }
-    const sql="SELECT thought,time(updatetime) as lasttime,DATE_FORMAT(updatetime, '%d-%m-%y') as lastdate FROM thoughts WHERE userid=? order by updatetime desc";
-    db.query(sql,(req.session.user.username),(err,results)=>{
-        if(err){
-            console.error(err);
-            return res.json(0);
-        }
-        res.json(results);
-    })
-})
-.post((req,res)=>{
-    db.query("create table if not exists thoughts(sl int primary key auto_increment,thought varchar(20),userid varchar(20),updatetime datetime);"),(err,result)=>{
-        if(err){
-            console.error("Error creating table:", err);
-            return res.json(0);
-        }
-    }
-    const sql="Insert into thoughts(thought,userid,updatetime) values(?,?,now())";
-    console.log(req.session.user.username);
-    console.log(req.body.thought);
-    db.query(sql,[req.body.thought,req.session.user.username],(err,result)=>{
-        if(err){
-            console.error("Error inserting data:", err);
-            return res.json(0);
-        }
-        return res.json(1);
-    })
-})
+const loginRouter=require('./routes/login.js')
+app.use("/",loginRouter)
+const registerRouter=require('./routes/register.js')
+app.use("/",registerRouter)
+const thoughtcatrouter=require('./routes/thoughtsundercategory.js')
+app.use("/thoughtsundercategory",thoughtcatrouter) 
+const catRouter=require('./routes/categories.js')
+app.use("/categories",catRouter)
+const thoughtRouter=require('./routes/thoughts.js')
+app.use("/thoughts",thoughtRouter)
+
+const passwordRouter=require('./routes/forgotpassword.js')
+app.use("/forgotpassword",passwordRouter)
+const profile=require('./routes/profile.js')
+app.use("/profile",profile)
+
+
 app.listen(1234);
