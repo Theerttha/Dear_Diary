@@ -5,14 +5,13 @@ const cors=require('cors');
 const router=express.Router()
 const app=express();
 
-
-
 const db = require("./db");
 
-
+const frontendUrl=process.env.frontendUrl;
+console.log(frontendUrl)
 app.use(
     cors({
-      origin: "http://localhost:5173", // Allow frontend
+      origin:frontendUrl , // Allow frontend
       credentials: true, // Allow cookies/sessions
       methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
       allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
@@ -51,4 +50,4 @@ const profile=require('./routes/profile.js')
 app.use("/profile",profile)
 
 
-app.listen(1234);
+app.listen(1235);

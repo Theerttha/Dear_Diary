@@ -84,6 +84,7 @@ const Thoughts = () => {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState({});
   const [selectedCategory, setSelectedCategory] = useState({});
   const [hoveredThoughtId, setHoveredThoughtId] = useState(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // Calculate theme colors based on the base color
   const theme = useMemo(() => {
@@ -105,7 +106,7 @@ const Thoughts = () => {
 
   const fetchThoughts = async () => {
     try {
-      const response = await axios.get(`http://localhost:1234/thoughts/`, {
+      const response=await axios.get(`${apiUrl}/thoughts/`, {
         withCredentials: true,
       });
       setThoughts(response.data);
@@ -116,7 +117,7 @@ const Thoughts = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`http://localhost:1234/categories/`, {
+      const response = await axios.get(`${apiUrl}/categories/`, {
         withCredentials: true,
       });
       setCategories(response.data);
@@ -127,7 +128,7 @@ const Thoughts = () => {
 
   const fetchThoughtCategories = async () => {
     try {
-      const response = await axios.get(`http://localhost:1234/thoughts/categories`, {
+      const response = await axios.get(`${apiUrl}/thoughts/categories`, {
         withCredentials: true,
       });
       
@@ -159,7 +160,7 @@ const Thoughts = () => {
     if (!newThought.trim()) return;
     try {
       await axios.post(
-        "http://localhost:1234/thoughts/",
+        `${apiUrl}/thoughts/`,
         { thought: newThought },
         { withCredentials: true }
       );
@@ -177,7 +178,7 @@ const Thoughts = () => {
       if (!newText?.trim()) return;
 
       await axios.put(
-        `http://localhost:1234/thoughts/${id}`,
+        `${apiUrl}/thoughts/${id}`,
         { thought: newText },
         { withCredentials: true }
       );
@@ -197,7 +198,7 @@ const Thoughts = () => {
 
   const deleteThought = async (id) => {
     try {
-      await axios.delete(`http://localhost:1234/thoughts/${id}`, {
+      await axios.delete(`${apiUrl}/thoughts/${id}`, {
         withCredentials: true,
       });
       fetchThoughts();
@@ -211,7 +212,7 @@ const Thoughts = () => {
     
     try {
       await axios.post(
-        `http://localhost:1234/thoughts/categories`,
+        `${apiUrl}/thoughts/categories`,
         { thoughtId, categoryId },
         { withCredentials: true }
       );
@@ -234,7 +235,7 @@ const Thoughts = () => {
 
   const removeFromCategory = async (linkId) => {
     try {
-      await axios.delete(`http://localhost:1234/thoughts/categories/${linkId}`, {
+      await axios.delete(`${apiUrl}/thoughts/categories/${linkId}`, {
         withCredentials: true,
       });
       

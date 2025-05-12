@@ -5,6 +5,7 @@ import Navbar from "./Navbar.jsx";
 import "./Categories.css"; // We'll update this CSS file
 
 const Categories = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const location = useLocation();
   const username = location.state?.username || "Guest";
   const color = location.state?.color || "#ffffff";
@@ -60,7 +61,7 @@ const Categories = () => {
 
   const getCategories = async () => {
     try {
-      const response = await axios.get(`http://localhost:1234/categories/`, {
+      const response = await axios.get(`${apiUrl}/categories/`, {
         withCredentials: true,
       });
       setCatData(response.data);
@@ -71,7 +72,7 @@ const Categories = () => {
 
   const getThoughts = async (categoryId) => {
     try {
-      const res = await axios.get(`http://localhost:1234/categories/${categoryId}`, {
+      const res = await axios.get(`${apiUrl}/categories/${categoryId}`, {
         withCredentials: true,
       });
       console.log(res.data);
@@ -99,7 +100,7 @@ const Categories = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:1234/categories",
+        `${apiUrl}/categories`,
         { cat: newCategoryName },
         { withCredentials: true }
       );
@@ -113,7 +114,7 @@ const Categories = () => {
 
   const deleteCategory = async (categoryId) => {
     try {
-      await axios.delete(`http://localhost:1234/categories/${categoryId}`, {
+      await axios.delete(`${apiUrl}/categories/${categoryId}`, {
         withCredentials: true,
       });
       
@@ -132,7 +133,7 @@ const Categories = () => {
 
     try {
       await axios.put(
-        `http://localhost:1234/categories/${categoryId}`,
+        `${apiUrl}/categories/${categoryId}`,
         { cat: categoryNameUpdate },
         { withCredentials: true }
       );
@@ -153,7 +154,7 @@ const Categories = () => {
     
     try {
       await axios.put(
-        `http://localhost:1234/thoughts/${thought.id}`,
+        `${apiUrl}/thoughts/${thought.id}`,
         {
           thought: thoughtUpdates[thoughtIndex]
         },
@@ -174,7 +175,7 @@ const Categories = () => {
     
     try {
       await axios.delete(
-        `http://localhost:1234/thoughts/${thought.id}`,
+        `${apiUrl}/thoughts/${thought.id}`,
         { withCredentials: true }
       );
       await refreshThoughts();
@@ -189,7 +190,7 @@ const Categories = () => {
     
     try {
       await axios.delete(
-        `http://localhost:1234/categories/${categoryId}/thoughts/${thought.id}`,
+        `${apiUrl}/categories/${categoryId}/thoughts/${thought.id}`,
         { withCredentials: true }
       );
       await refreshThoughts();

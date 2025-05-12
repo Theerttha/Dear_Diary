@@ -11,7 +11,7 @@ const Register = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // "error" or "success"
   const navigate = useNavigate();
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleSub = async (event) => {
     event.preventDefault();
     
@@ -24,7 +24,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:1234/register/",
+        `${apiUrl}/register`,
         { username, password, favouriteColour, dob },
         { withCredentials: true }
       );

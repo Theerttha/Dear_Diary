@@ -5,6 +5,7 @@ import axios from "axios";
 import { FaUserCircle, FaHome, FaLayerGroup, FaLightbulb } from "react-icons/fa";
 
 const Navbar = ({ username = "Guest", color = "#ffffff",password="default" }) => {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [theme, setTheme] = useState({
@@ -43,7 +44,7 @@ const Navbar = ({ username = "Guest", color = "#ffffff",password="default" }) =>
     const handleLogout = async () => {
         try {
             console.log("Logging out...");
-            await axios.get("http://localhost:1234/logout", { withCredentials: true });
+            await axios.get(`${apiUrl}/logout`, { withCredentials: true });
             navigate("/");
         } catch (error) {
             console.log("Logout failed", error);

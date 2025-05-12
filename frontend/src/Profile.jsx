@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 
 const Profile = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState(location.state?.username || "Guest");
@@ -38,7 +39,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`http://localhost:1234/profile/`, {
+      const response = await axios.get(`${apiUrl}/profile/`, {
         withCredentials: true,
       });
       
@@ -102,7 +103,7 @@ const Profile = () => {
     
     try {
       const response = await axios.put(
-        "http://localhost:1234/profile/",
+        `${apiUrl}/profile/`,
         updatedProfile,
         { withCredentials: true }
       );

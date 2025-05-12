@@ -11,12 +11,12 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // "error" or "success"
   const navigate = useNavigate();
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       console.log(username, dob);
-      const response = await axios.post("http://localhost:1234/forgotpassword", {
+      const response = await axios.post(`${apiUrl}/forgotpassword`, {
         username,
         dob,
         withCredentials: true,
@@ -49,7 +49,7 @@ const ForgotPassword = () => {
     }
     
     try {
-      const response = await axios.put("http://localhost:1234/forgotpassword/resetpassword", {
+      const response = await axios.put(`${apiUrl}/forgotpassword/resetpassword`, {
         username,
         newPassword,
         withCredentials: true,

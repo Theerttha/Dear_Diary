@@ -8,15 +8,15 @@ const Login = () => {
     const [loginstatus, setLogin] = useState(null);
     const [color, setColor] = useState("#ffffff");
     const navigate = useNavigate();
-
+    const apiUrl = import.meta.env.VITE_API_URL;
     const handleSub = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post(
-                "http://localhost:1234/login",
+            const response = await axios.post(`${apiUrl}/login`,
                 { username, password },
                 { withCredentials: true } 
             );
+            console.log(response.data)
             if (response.data===null || response.data==0){
                 setLogin(null);
                 
@@ -33,7 +33,8 @@ const Login = () => {
 
     const checkSession = async () => {
         try {
-            const response = await axios.get("http://localhost:1234/login", { withCredentials: true });
+            console.log((`${apiUrl}/login`))
+            const response = await axios.get(`${apiUrl}/login`, { withCredentials: true });
             console.log("Session Response:", response.data);
 ;
             if (response.data == null || response.data==0) {
@@ -52,7 +53,7 @@ const Login = () => {
     const handleLogout = async () => {
         setLogin(null);
         try {
-            await axios.post("http://localhost:1234/logout", { withCredentials: true });
+            await axios.post(`${import.meta.env.VITE_API_URL}/logout`, { withCredentials: true });
         } catch (error) {
             console.log("Logout failed", error);
         }
