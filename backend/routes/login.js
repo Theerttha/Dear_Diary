@@ -17,7 +17,7 @@ router.route('/login')
     return res.json(null); 
 })
 .post(async(req,res)=>{
-
+    console.log(db.root+db.password);
     db.query("Create table if not exists userDetails(sl int primary key auto_increment,username varchar(20) unique,password varchar(50),dob date,color varchar(20));"),(err,result)=>{
         if(err){
             console.error("Error creating table:", err);
