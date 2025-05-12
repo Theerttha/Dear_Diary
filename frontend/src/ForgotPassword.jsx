@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 const ForgotPassword = () => {
   const [username, setUsername] = useState("");
   const [dob, setDob] = useState("");
-  const [favouriteColour, setFavouriteColour] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [verified, setVerified] = useState(false);
@@ -16,11 +15,10 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(username, dob, favouriteColour);
+      console.log(username, dob);
       const response = await axios.post("http://localhost:1234/forgotpassword", {
         username,
         dob,
-        favouriteColour,
         withCredentials: true,
       });
       
@@ -145,37 +143,7 @@ const ForgotPassword = () => {
               />
             </div>
 
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                Favorite Color
-              </label>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <input
-                  type="color"
-                  value={favouriteColour}
-                  onChange={(e) => setFavouriteColour(e.target.value)}
-                  style={{ 
-                    width: "50px", 
-                    height: "40px", 
-                    padding: "0", 
-                    border: "1px solid #ddd",
-                    marginRight: "10px"
-                  }}
-                />
-                <input
-                  type="text"
-                  value={favouriteColour}
-                  onChange={(e) => setFavouriteColour(e.target.value)}
-                  required
-                  style={{ 
-                    flex: "1",
-                    padding: "8px", 
-                    borderRadius: "4px",
-                    border: "1px solid #ddd"
-                  }}
-                />
-              </div>
-            </div>
+
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <button 

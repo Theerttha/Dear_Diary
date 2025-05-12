@@ -6,6 +6,7 @@ const router=express.Router()
 
 const mysql=require('mysql');
 const db = require("../db");
+const bcrypt=require("bcrypt");
 
 router.route('/login')
 
@@ -15,21 +16,29 @@ router.route('/login')
     }
     return res.json(null); 
 })
-.post((req,res)=>{
-    db.query("Create table if not exists user_details(sl int primary key auto_increment,username varchar(20) unique,pass varchar(20));"),(err,result)=>{
+.post(async(req,res)=>{
+
+    db.query("Create table if not exists userDetails(sl int primary key auto_increment,username varchar(20) unique,password varchar(50),dob date,color varchar(20));"),(err,result)=>{
         if(err){
             console.error("Error creating table:", err);
             return res.json(0);
         }
     }
-    const sql="Select color from user_details where username like ? and pass like ?";
-    db.query(sql,[req.body.username,req.body.password],(err,data)=>{
+    const sql="Select password,color from userDetails where username like ?";
+    db.query(sql,[req.body.username],async(err,data)=>{
         if (err) return res.json(0);
         else{
             if (data.length>0){
-                req.session.user={username:req.body.username};
-                console.log(req.session.user);
-                return res.json(data[0].color);
+                const isValid=await bcrypt.compare(req.body.password,data[0].password);
+                if (!isValid){
+                    return res.json(0);
+                }
+                else{
+                    req.session.user={username:req.body.username};
+                    console.log(req.session.user);
+                    return res.json(data[0].color);
+                }
+                
             }
                 
         }

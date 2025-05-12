@@ -17,9 +17,15 @@ const Login = () => {
                 { username, password },
                 { withCredentials: true } 
             );
-            console.log(response.data);
-            setColor(response.data);
-            setLogin(1);
+            if (response.data===null || response.data==0){
+                setLogin(null);
+                
+            }
+            else{
+                setColor(response.data);
+                setLogin(1);
+                
+            }
         } catch (error) {
             console.log("Login Error:", error);
         }
@@ -29,9 +35,12 @@ const Login = () => {
         try {
             const response = await axios.get("http://localhost:1234/login", { withCredentials: true });
             console.log("Session Response:", response.data);
-            if (response.data === null) {
+;
+            if (response.data == null || response.data==0) {
+                console.log("response.data",response.data);
                 setLogin(null);
             } else {
+                console.log("response",response.data);
                 setLogin(1);
             }
         } catch (error) {
@@ -55,7 +64,7 @@ const Login = () => {
 
     useEffect(() => {
         if (loginstatus === 1) {
-            navigate("/notes", { state: { username: username,color:color} });
+            navigate("/notes", { state: { username: username,password:password,color:color} });
         }
     }, [loginstatus, navigate]);
 

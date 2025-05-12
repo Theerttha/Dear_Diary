@@ -81,7 +81,7 @@ router.route('/:id')
 })
 router.route('/categories')
 .get((req,res)=>{
-    db.query("create table if not exists categories(id int primary key auto_increment,category varchar(20),thoughtid int);"),(err,result)=>{
+    db.query("create table if not exists cat_thoughts(id int primary key auto_increment,categoryid int,thoughtid int);"),(err,result)=>{
         if(err){
             console.error("Error creating table:", err);
             return res.json(0);
@@ -97,6 +97,12 @@ router.route('/categories')
     })
 })
 .post((req,res)=>{
+    db.query("create table if not exists cat_thoughts(id int primary key auto_increment,categoryid int,thoughtid int);"),(err,result)=>{
+        if(err){
+            console.error("Error creating table:", err);
+            return res.json(0);
+        }
+    }
     const sql="Insert into cat_thoughts(categoryid,thoughtid) values(?,?)";
     db.query(sql,[req.body.categoryId,req.body.thoughtId],(err,result)=>{
         if(err){

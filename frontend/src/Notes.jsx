@@ -7,12 +7,11 @@ const Notes = () => {
     const location = useLocation();
     const [username, setUsername] = useState(location.state?.username || "Guest");
     const [color, setColor] = useState(location.state?.color || "#ffffff");
-
-
+    const [password,setPassword]=useState(location.state?.password||"default");
 
     return (
         <div>
-            <Navbar username={username} color={color} />
+            <Navbar username={username} password={password} color={color} />
             <h1>{username} - {color}</h1>
       
         </div>

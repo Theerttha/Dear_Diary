@@ -3,14 +3,12 @@ const express=require('express');
 const cors=require('cors');
 const session = require("express-session");
 const router=express.Router()
-
 const mysql=require('mysql');
 const db = require("../db");
-
+const bcrypt=require("bcrypt");
 router.route('/')
 .get((req,res)=>{
-    console.log("session",req.session.user.username);
-    const sql="SELECT username,dob,color FROM user_details WHERE username=?"
+    const sql="SELECT username,dob,color FROM userdetails WHERE username=?"
     db.query(sql,req.session.user.username,(err,result)=>{
         if(err) return res.status(500).json(err);
         if(result.length>0){
@@ -23,11 +21,10 @@ router.route('/')
     })
     
 })
-.put((req,res)=>{
-    console.log(req.body)
-    console.log("session",req.session.user.username);
-    const sql="UPDATE user_details SET dob=?,color=?,username=? WHERE username=?"
-    db.query(sql,[req.body.dob,req.body.color,req.body.username,req.session.user.username],(err,result)=>{
+.put(async(req,res)=>{
+    const sql="UPDATE userdetails SET dob=?,color=?,password=?,username=? WHERE username=?"
+    const newPassword=await bcrypt.hash(req.body.password,11);
+    db.query(sql,[req.body.dob,req.body.color,newPassword,req.body.username,req.session.user.username],(err,result)=>{
         console.log(err)
         if(err) return res.json(0);
         console.log(result)

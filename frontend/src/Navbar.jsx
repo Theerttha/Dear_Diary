@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaUserCircle, FaHome, FaLayerGroup, FaLightbulb } from "react-icons/fa";
 
-const Navbar = ({ username = "Guest", color = "#ffffff" }) => {
+const Navbar = ({ username = "Guest", color = "#ffffff",password="default" }) => {
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [theme, setTheme] = useState({
@@ -232,7 +232,7 @@ const Navbar = ({ username = "Guest", color = "#ffffff" }) => {
                         
                         <div style={{ padding: "12px" }}>
                             <button 
-                                onClick={() => navigate("/profile", { state: { username, color } })}
+                                onClick={() => navigate("/profile", { state: { username,password, color } })}
                                 style={{ 
                                     width: "100%", 
                                     textAlign: "left", 
