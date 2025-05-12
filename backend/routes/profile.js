@@ -5,7 +5,7 @@ const session = require("express-session");
 const router=express.Router()
 const mysql=require('mysql');
 const db = require("../db");
-const bcrypt=require("bcrypt");
+const bcrypt=require("bcryptjs");
 router.route('/')
 .get((req,res)=>{
     const sql="SELECT username,dob,color FROM userdetails WHERE username=?"

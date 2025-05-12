@@ -7,7 +7,7 @@ const router=express.Router()
 
 const mysql=require('mysql');
 const db = require("../db");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 router.route('/register')
 .post(async(req,res)=>{
     db.query("Create table if not exists userDetails(sl int primary key auto_increment,username varchar(20) unique,password varchar(100),dob date,color varchar(20));"),(err,result)=>{

@@ -6,7 +6,7 @@ const router=express.Router()
 
 const mysql=require('mysql');
 const db = require("../db");
-const bcrypt=require("bcrypt")
+const bcrypt=require("bcryptjs")
 router.route('/')
 .post((req,res)=>{
 
