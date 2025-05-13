@@ -20,17 +20,17 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({extended:true}),)
 app.use(
-    session({
-        secret:"top_secret",
-        resave:false,
-        saveUninitialized:true,
-        cookie:{
-            secure:false,
-            httpOnly:true,
-            maxAge:1000*60*60*24,
-        },
-
-    })
+  session({
+    secret: "top_secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: true,           // Must be true for HTTPS
+      httpOnly: true,
+      sameSite: 'none',       // Must be 'none' for cross-origin cookies
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
 );
 
 const loginRouter=require('./routes/login.js')
