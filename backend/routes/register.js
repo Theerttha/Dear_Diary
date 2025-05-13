@@ -22,7 +22,7 @@ router.route('/register')
     db.query(sql, [req.body.username,password,req.body.favouriteColour,req.body.dob], (err, result) => {
         if (err) {
             console.error("Error inserting data:", err);
-            return res.json(0);
+            return res.json(err);
         }
         return res.json(1);
     });

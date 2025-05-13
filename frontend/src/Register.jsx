@@ -34,7 +34,7 @@ const Register = () => {
       if (response.data === 0) {
         setMessage("Username already exists. Please choose a different username.");
         setMessageType("error");
-      } else {
+      } else if(response.data==1){
         setMessage("Registration successful! Redirecting to login...");
         setMessageType("success");
         
@@ -42,6 +42,9 @@ const Register = () => {
         setTimeout(() => {
           navigate("/");
         }, 2000);
+      }
+      else{
+        console.log(response.data);
       }
     } catch (error) {
       console.log("Registration Error:", error);
