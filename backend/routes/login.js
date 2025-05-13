@@ -11,13 +11,14 @@ const bcrypt=require("bcryptjs");
 router.route('/login')
 
 .get((req,res)=>{
+    console.log("get in loginjs");
     if(req.user){
         return res.json(req.session.user.username);
     }
     return res.json(null); 
 })
 .post(async(req,res)=>{
-    console.log(db.root+db.password);
+    console.log("post in loginjs");
     db.query("Create table if not exists userDetails(sl int primary key auto_increment,username varchar(20) unique,password varchar(50),dob date,color varchar(20));"),(err,result)=>{
         if(err){
             console.error("Error creating table:", err);
