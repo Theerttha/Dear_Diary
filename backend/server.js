@@ -6,7 +6,7 @@ const router=express.Router()
 const app=express();
 
 const db = require("./db");
-
+app.set('trust proxy', 1);
 const frontendUrl=process.env.frontendUrl;
 console.log(frontendUrl)
 app.use(
