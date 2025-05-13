@@ -26,5 +26,6 @@ router.route('/register')
         }
         return res.json(1);
     });
+
 })
 module.exports=router;

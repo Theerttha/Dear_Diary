@@ -10,7 +10,7 @@ const bcrypt=require("bcryptjs")
 router.route('/')
 .post((req,res)=>{
 
-    const sql="Select * from userdetails where username like ? and dob like ?";
+    const sql="Select * from userDetails where username like ? and dob like ?";
     db.query(sql,[req.body.username, req.body.dob],(err,data)=>{
         console.log(data);
         if (err) return res.json(0);
@@ -27,7 +27,7 @@ router.route('/')
 })
 router.route('/resetpassword')
 .put(async(req,res)=>{
-    const sql="update userdetails set password=? where username like ?";
+    const sql="update userDetails set password=? where username like ?";
     const hashedPassword=await bcrypt.hash(req.body.newPassword,11);
     db.query(sql,[hashedPassword,req.body.username],(err,result)=>{
         if (err) return res.json(0);
