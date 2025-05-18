@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./Register.css"; // We'll create this CSS file separately
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ const Register = () => {
   const [messageType, setMessageType] = useState(""); // "error" or "success"
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
+  
   const handleSub = async (event) => {
     event.preventDefault();
     
@@ -34,7 +36,7 @@ const Register = () => {
       if (response.data === 0) {
         setMessage("Username already exists. Please choose a different username.");
         setMessageType("error");
-      } else if(response.data==1){
+      } else if(response.data === 1){
         setMessage("Registration successful! Redirecting to login...");
         setMessageType("success");
         
@@ -54,156 +56,108 @@ const Register = () => {
   };
 
   return (
-    <div style={{ 
-      maxWidth: "600px", 
-      margin: "0 auto", 
-      padding: "20px" 
-    }}>
-      <h2 style={{ 
-        textAlign: "center", 
-        marginBottom: "30px" 
-      }}>Register Account</h2>
+    <div className="register-container">
+      <div className="background-words">
+        <div className="word">Memories</div>
+        <div className="word">Journal</div>
+        <div className="word">Thoughts</div>
+        <div className="word">Dreams</div>
+        <div className="word">Stories</div>
+        <div className="word">Notes</div>
+        <div className="word">Diary</div>
+        <div className="word">Reflections</div>
+        <div className="word">Moments</div>
+        <div className="word">Secrets</div>
+        <div className="word">Adventures</div>
+        <div className="word">Feelings</div>
+        <div className="word">Emotions</div>
+        <div className="word">Chronicles</div>
+        <div className="word">Confessions</div>
+        <div className="word">Letters</div>
+        <div className="word">Experiences</div>
+        <div className="word">Ideas</div>
+        <div className="word">Heart</div>
+        <div className="word">Soul</div>
+      </div>
       
-      {message && (
-        <div style={{ 
-          padding: "10px", 
-          backgroundColor: messageType === "error" ? "#ffebee" : "#e8f5e9",
-          color: messageType === "error" ? "#c62828" : "#2e7d32",
-          borderRadius: "4px",
-          marginBottom: "20px"
-        }}>
-          {message}
-        </div>
-      )}
+      <div className="register-box">
+        <h1 className="register-title">REGISTER</h1>
+        
+        {message && (
+          <div className={`message ${messageType}`}>
+            {message}
+          </div>
+        )}
 
-      <div style={{ 
-        padding: "20px", 
-        border: "1px solid #ddd", 
-        borderRadius: "5px",
-        backgroundColor: "#f9f9f9"
-      }}>
-        <form onSubmit={handleSub}>
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-              Username
-            </label>
+        <form onSubmit={handleSub} className="register-form">
+          <div className="form-group">
+            <label>Username</label>
             <input 
               type="text" 
               name="username" 
               value={username}
               onChange={(e) => setUsername(e.target.value)} 
               required 
-              style={{ 
-                width: "100%", 
-                padding: "8px", 
-                borderRadius: "4px",
-                border: "1px solid #ddd"
-              }}
             />
           </div>
           
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-              Password
-            </label>
+          <div className="form-group">
+            <label>Password</label>
             <input 
               type="password" 
               name="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)} 
               required 
-              style={{ 
-                width: "100%", 
-                padding: "8px", 
-                borderRadius: "4px",
-                border: "1px solid #ddd"
-              }}
             />
           </div>
           
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-              Confirm Password
-            </label>
+          <div className="form-group">
+            <label>Confirm Password</label>
             <input 
               type="password" 
               name="confirmPassword" 
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)} 
               required 
-              style={{ 
-                width: "100%", 
-                padding: "8px", 
-                borderRadius: "4px",
-                border: "1px solid #ddd"
-              }}
             />
           </div>
 
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-              Date of Birth
-            </label>
+          <div className="form-group">
+            <label>Date of Birth</label>
             <input 
               type="date" 
               name="dob" 
               value={dob}
               onChange={(e) => setDob(e.target.value)} 
               required 
-              style={{ 
-                width: "100%", 
-                padding: "8px", 
-                borderRadius: "4px",
-                border: "1px solid #ddd"
-              }}
             />
           </div>
 
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-              Favorite Color
-            </label>
-            <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="form-group">
+            <label>Favorite Color</label>
+            <div className="color-selector">
               <input
                 type="color"
                 name="favouriteColour"
                 value={favouriteColour}
                 onChange={(e) => setFavouriteColour(e.target.value)}
-                style={{ 
-                  width: "50px", 
-                  height: "40px", 
-                  padding: "0", 
-                  border: "1px solid #ddd",
-                  marginRight: "10px"
-                }}
+                className="color-picker"
               />
               <input
                 type="text"
                 name="favouriteColourText"
                 value={favouriteColour}
                 onChange={(e) => setFavouriteColour(e.target.value)}
-                style={{ 
-                  flex: "1",
-                  padding: "8px", 
-                  borderRadius: "4px",
-                  border: "1px solid #ddd"
-                }}
+                className="color-text"
               />
             </div>
           </div>
           
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className="button-group">
             <button 
               type="submit"
-              style={{ 
-                padding: "10px 20px", 
-                backgroundColor: "#2196f3", 
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontWeight: "bold"
-              }}
+              className="register-button"
             >
               Register
             </button>
@@ -211,14 +165,7 @@ const Register = () => {
             <button 
               type="button"
               onClick={() => navigate("/")}
-              style={{ 
-                padding: "10px 20px", 
-                backgroundColor: "#f5f5f5", 
-                color: "#333",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                cursor: "pointer"
-              }}
+              className="back-button"
             >
               Back to Login
             </button>

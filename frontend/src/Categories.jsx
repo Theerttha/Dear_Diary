@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
-import "./Categories.css"; // We'll update this CSS file
+import "./Categories.css";
 
 const Categories = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const location = useLocation();
   const username = location.state?.username || "Guest";
-  const color = location.state?.color || "#ffffff";
+  const color = location.state?.color || "#3498db"; // Default to blue if no color
   
   // Function to determine text color based on background
   const getContrastColor = (bgColor) => {
@@ -19,7 +19,7 @@ const Categories = () => {
     
     // Calculate luminance - brighter colors need dark text
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.5 ? '#000000' : '#ffffff';
+    return luminance > 0.5 ? '#333333' : '#f5f5f5'; // Using near-black and near-white for better contrast
   };
   
   // Generate complementary colors from base color
@@ -75,7 +75,6 @@ const Categories = () => {
       const res = await axios.get(`${apiUrl}/categories/${categoryId}`, {
         withCredentials: true,
       });
-      console.log(res.data);
       return res.data;
     } catch (error) {
       console.log(`Error fetching thoughts for category ${categoryId}`, error);
@@ -84,14 +83,28 @@ const Categories = () => {
   };
 
   const handleToggleCategory = async (id) => {
+    // If already selected, either deselect or activate edit mode
     if (selectedCatIds.includes(id)) {
-      setSelectedCatIds((prev) => prev.filter((catId) => catId !== id));
+      if (editingCategoryId === id) {
+        // Already editing, just cancel edit
+        setEditingCategoryId(null);
+      } else {
+        // Activate edit mode for this category
+        setEditingCategoryId(id);
+        const category = CatData.find(cat => cat.id === id);
+        if (category) {
+          setCategoryNameUpdate(category.category);
+        }
+      }
     } else {
-      setSelectedCatIds((prev) => [...prev, id]);
+      // Not selected yet, select it
+      setSelectedCatIds(prev => [...prev, id]);
       if (!thoughtsByCategory[id]) {
         const data = await getThoughts(id);
-        setThoughtsByCategory((prev) => ({ ...prev, [id]: data }));
+        setThoughtsByCategory(prev => ({ ...prev, [id]: data }));
       }
+      // Switch to thoughts view when selecting a category
+      setActiveSection("thoughts");
     }
   };
 
@@ -99,7 +112,7 @@ const Categories = () => {
     if (!newCategoryName.trim()) return;
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${apiUrl}/categories`,
         { cat: newCategoryName },
         { withCredentials: true }
@@ -112,7 +125,9 @@ const Categories = () => {
     }
   };
 
-  const deleteCategory = async (categoryId) => {
+  const deleteCategory = async (categoryId, e) => {
+    if (e) e.stopPropagation(); // Prevent triggering selection
+    
     try {
       await axios.delete(`${apiUrl}/categories/${categoryId}`, {
         withCredentials: true,
@@ -128,7 +143,8 @@ const Categories = () => {
     }
   };
 
-  const updateCategoryName = async (categoryId) => {
+  const updateCategoryName = async (categoryId, e) => {
+    if (e) e.stopPropagation(); // Prevent triggering toggle
     if (!categoryNameUpdate.trim()) return;
 
     try {
@@ -169,7 +185,9 @@ const Categories = () => {
     }
   };
 
-  const handleDeleteThought = async (thoughtIndex) => {
+  const handleDeleteThought = async (thoughtIndex, e) => {
+    if (e) e.stopPropagation(); // Prevent triggering edit mode
+    
     const thought = allThoughts[thoughtIndex];
     if (!thought || !thought.id) return;
     
@@ -184,7 +202,9 @@ const Categories = () => {
     }
   };
 
-  const handleRemoveFromCategory = async (thoughtIndex, categoryId) => {
+  const handleRemoveFromCategory = async (thoughtIndex, categoryId, e) => {
+    if (e) e.stopPropagation(); // Prevent triggering edit mode
+    
     const thought = allThoughts[thoughtIndex];
     if (!thought || !thought.id) return;
     
@@ -251,6 +271,16 @@ const Categories = () => {
     const category = CatData.find(cat => cat.id === catId);
     return category ? category.category : 'Unknown';
   };
+
+  // SVG icons
+  const TrashIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18"></path>
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+    </svg>
+  );
 
   return (
     <div className="app-container" style={{ 
@@ -357,6 +387,7 @@ const Categories = () => {
                   <div 
                     key={cat.id}
                     className={`category-card ${selectedCatIds.includes(cat.id) ? 'selected' : ''}`}
+                    onClick={() => handleToggleCategory(cat.id)}
                     style={{ 
                       borderColor: selectedCatIds.includes(cat.id) ? color : palette.mediumShade,
                       backgroundColor: selectedCatIds.includes(cat.id) ? palette.lighterShade : 'white',
@@ -364,7 +395,7 @@ const Categories = () => {
                     }}
                   >
                     {editingCategoryId === cat.id ? (
-                      <div className="edit-category-form">
+                      <div className="edit-category-form" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="text"
                           value={categoryNameUpdate}
@@ -374,14 +405,17 @@ const Categories = () => {
                         />
                         <div className="category-edit-actions">
                           <button
-                            onClick={() => updateCategoryName(cat.id)}
+                            onClick={(e) => updateCategoryName(cat.id, e)}
                             className="save-button"
                             style={{ backgroundColor: color, color: textColor }}
                           >
                             Save
                           </button>
                           <button
-                            onClick={() => setEditingCategoryId(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingCategoryId(null);
+                            }}
                             className="cancel-button"
                           >
                             Cancel
@@ -392,28 +426,18 @@ const Categories = () => {
                       <>
                         <div 
                           className="category-title"
-                          onClick={() => handleToggleCategory(cat.id)}
                           style={{ color: selectedCatIds.includes(cat.id) ? color : textColor }}
                         >
                           {cat.category}
                         </div>
-                        <div className="category-card-actions">
-                          <button
-                            onClick={() => {
-                              setEditingCategoryId(cat.id);
-                              setCategoryNameUpdate(cat.category);
-                            }}
-                            className="action-button edit-button"
-                            style={{ color }}
+                        <div className="category-card-actions" onClick={(e) => e.stopPropagation()}>
+                          <span
+                            onClick={(e) => deleteCategory(cat.id, e)}
+                            className="trash-icon"
+                            style={{ color: "#ff4d4d" }}
                           >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => deleteCategory(cat.id)}
-                            className="action-button delete-button"
-                          >
-                            Delete
-                          </button>
+                            <TrashIcon />
+                          </span>
                         </div>
                       </>
                     )}
@@ -440,13 +464,14 @@ const Categories = () => {
                   <div 
                     key={cat.id}
                     className="selected-category-item"
+                    onClick={() => handleToggleCategory(cat.id)}
                     style={{ 
                       backgroundColor: palette.lighterShade,
                       borderLeft: `4px solid ${color}`
                     }}
                   >
                     {editingCategoryId === cat.id ? (
-                      <div className="edit-category-form">
+                      <div className="edit-category-form" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="text"
                           value={categoryNameUpdate}
@@ -456,14 +481,17 @@ const Categories = () => {
                         />
                         <div className="category-edit-actions">
                           <button
-                            onClick={() => updateCategoryName(cat.id)}
+                            onClick={(e) => updateCategoryName(cat.id, e)}
                             className="save-button"
                             style={{ backgroundColor: color, color: textColor }}
                           >
                             Save
                           </button>
                           <button
-                            onClick={() => setEditingCategoryId(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingCategoryId(null);
+                            }}
                             className="cancel-button"
                           >
                             Cancel
@@ -475,25 +503,19 @@ const Categories = () => {
                         <div className="selected-category-name" style={{ color }}>
                           {cat.category}
                         </div>
-                        <div className="selected-category-actions">
+                        <div className="selected-category-actions" onClick={(e) => e.stopPropagation()}>
+                          <span
+                            onClick={(e) => deleteCategory(cat.id, e)}
+                            className="trash-icon"
+                            style={{ color: "#ff4d4d" }}
+                          >
+                            <TrashIcon />
+                          </span>
                           <button
-                            onClick={() => {
-                              setEditingCategoryId(cat.id);
-                              setCategoryNameUpdate(cat.category);
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedCatIds(prev => prev.filter(id => id !== cat.id));
                             }}
-                            className="action-button edit-button"
-                            style={{ color }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => deleteCategory(cat.id)}
-                            className="action-button delete-button"
-                          >
-                            Delete
-                          </button>
-                          <button
-                            onClick={() => handleToggleCategory(cat.id)}
                             className="action-button"
                             style={{ color }}
                           >
@@ -510,10 +532,19 @@ const Categories = () => {
         )}
 
         {/* Thoughts Section */}
-        {(activeSection === "thoughts" || activeSection === "all") && (
+        {(activeSection === "thoughts") && (
           <div className="category-section thoughts-section">
             <div className="section-header">
               <h3 className="section-title" style={{ color }}>Thoughts</h3>
+              {selectedCats.length > 0 && (
+                <div className="selected-categories-chips">
+                  {selectedCats.map(cat => (
+                    <span key={cat.id} className="category-chip" style={{ backgroundColor: palette.lighterShade, color }}>
+                      {cat.category}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             {allThoughts.length > 0 ? (
               <div className="thoughts-grid">
@@ -521,6 +552,15 @@ const Categories = () => {
                   <div 
                     key={index} 
                     className="thought-card" 
+                    onClick={() => {
+                      if (editingThoughtIndex !== index) {
+                        setEditingThoughtIndex(index);
+                        setThoughtUpdates((prev) => ({
+                          ...prev,
+                          [index]: thought.thought,
+                        }));
+                      }
+                    }}
                     style={{ 
                       backgroundColor: 'white',
                       boxShadow: `0 4px 12px ${palette.mediumShade}`,
@@ -528,7 +568,7 @@ const Categories = () => {
                     }}
                   >
                     {editingThoughtIndex === index ? (
-                      <div className="edit-thought-form">
+                      <div className="edit-thought-form" onClick={(e) => e.stopPropagation()}>
                         <textarea
                           value={thoughtUpdates[index] !== undefined ? thoughtUpdates[index] : thought.thought}
                           onChange={(e) =>
@@ -565,18 +605,8 @@ const Categories = () => {
                       </div>
                     ) : (
                       <>
-                        <div 
-                          className="thought-content"
-                          onClick={() => {
-                            setEditingThoughtIndex(index);
-                            setThoughtUpdates((prev) => ({
-                              ...prev,
-                              [index]: thought.thought,
-                            }));
-                          }}
-                        >
+                        <div className="thought-content">
                           <p className="thought-text">{thought.thought}</p>
-                          <div className="thought-id">ID: {thought.id}</div>
                         </div>
                         
                         <div className="thought-categories-container">
@@ -593,10 +623,7 @@ const Categories = () => {
                               {getCategoryName(catId)}
                               <span 
                                 className="remove-category"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveFromCategory(index, catId);
-                                }}
+                                onClick={(e) => handleRemoveFromCategory(index, catId, e)}
                               >
                                 ✕
                               </span>
@@ -605,15 +632,13 @@ const Categories = () => {
                         </div>
                         
                         <div className="thought-footer">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteThought(index);
-                            }}
-                            className="delete-thought-button"
+                          <span
+                            onClick={(e) => handleDeleteThought(index, e)}
+                            className="trash-icon"
+                            style={{ color: "#ff4d4d" }}
                           >
-                            Delete
-                          </button>
+                            <TrashIcon />
+                          </span>
                         </div>
                       </>
                     )}

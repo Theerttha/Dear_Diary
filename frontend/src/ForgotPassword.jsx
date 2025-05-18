@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./forgotpassword.css"; // We'll create this CSS file separately
 
 const ForgotPassword = () => {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ const ForgotPassword = () => {
   const [messageType, setMessageType] = useState(""); // "error" or "success"
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -76,179 +78,122 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div style={{ 
-      maxWidth: "600px", 
-      margin: "0 auto", 
-      padding: "20px" 
-    }}>
-      <h2 style={{ 
-        textAlign: "center", 
-        marginBottom: "30px" 
-      }}>Forgot Password</h2>
+    <div className="forgot-password-container">
+      <div className="background-words">
+        <div className="word">Memories</div>
+        <div className="word">Journal</div>
+        <div className="word">Thoughts</div>
+        <div className="word">Dreams</div>
+        <div className="word">Stories</div>
+        <div className="word">Notes</div>
+        <div className="word">Diary</div>
+        <div className="word">Reflections</div>
+        <div className="word">Moments</div>
+        <div className="word">Secrets</div>
+        <div className="word">Adventures</div>
+        <div className="word">Feelings</div>
+        <div className="word">Emotions</div>
+        <div className="word">Chronicles</div>
+        <div className="word">Confessions</div>
+        <div className="word">Letters</div>
+        <div className="word">Experiences</div>
+        <div className="word">Ideas</div>
+        <div className="word">Heart</div>
+        <div className="word">Soul</div>
+      </div>
       
-      {message && (
-        <div style={{ 
-          padding: "10px", 
-          backgroundColor: messageType === "error" ? "#ffebee" : "#e8f5e9",
-          color: messageType === "error" ? "#c62828" : "#2e7d32",
-          borderRadius: "4px",
-          marginBottom: "20px"
-        }}>
-          {message}
-        </div>
-      )}
-
-      <div style={{ 
-        padding: "20px", 
-        border: "1px solid #ddd", 
-        borderRadius: "5px",
-        backgroundColor: "#f9f9f9"
-      }}>
-        {!verified ? (
-          // Step 1: Verify user identity
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                Username
-              </label>
-              <input 
-                type="text" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                required 
-                style={{ 
-                  width: "100%", 
-                  padding: "8px", 
-                  borderRadius: "4px",
-                  border: "1px solid #ddd"
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                Date of Birth
-              </label>
-              <input 
-                type="date" 
-                value={dob} 
-                onChange={(e) => setDob(e.target.value)} 
-                required 
-                style={{ 
-                  width: "100%", 
-                  padding: "8px", 
-                  borderRadius: "4px",
-                  border: "1px solid #ddd"
-                }}
-              />
-            </div>
-
-
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <button 
-                type="submit"
-                style={{ 
-                  padding: "10px 20px", 
-                  backgroundColor: "#2196f3", 
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "bold"
-                }}
-              >
-                Verify Identity
-              </button>
-              
-              <button 
-                type="button"
-                onClick={() => navigate("/")}
-                style={{ 
-                  padding: "10px 20px", 
-                  backgroundColor: "#f5f5f5", 
-                  color: "#333",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  cursor: "pointer"
-                }}
-              >
-                Back to Login
-              </button>
-            </div>
-          </form>
-        ) : (
-          // Step 2: Reset password
-          <form onSubmit={handleResetPassword}>
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                New Password
-              </label>
-              <input 
-                type="password" 
-                value={newPassword} 
-                onChange={(e) => setNewPassword(e.target.value)} 
-                required 
-                style={{ 
-                  width: "100%", 
-                  padding: "8px", 
-                  borderRadius: "4px",
-                  border: "1px solid #ddd"
-                }}
-              />
-            </div>
-            
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                Confirm New Password
-              </label>
-              <input 
-                type="password" 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
-                required 
-                style={{ 
-                  width: "100%", 
-                  padding: "8px", 
-                  borderRadius: "4px",
-                  border: "1px solid #ddd"
-                }}
-              />
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <button 
-                type="submit"
-                style={{ 
-                  padding: "10px 20px", 
-                  backgroundColor: "#4caf50", 
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "bold"
-                }}
-              >
-                Reset Password
-              </button>
-              
-              <button 
-                type="button"
-                onClick={() => navigate("/")}
-                style={{ 
-                  padding: "10px 20px", 
-                  backgroundColor: "#f5f5f5", 
-                  color: "#333",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  cursor: "pointer"
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+      <div className="forgot-password-box">
+        <h1 className="forgot-password-title">FORGOT PASSWORD</h1>
+        
+        {message && (
+          <div className={`message ${messageType}`}>
+            {message}
+          </div>
         )}
+
+        <div className="forgot-password-form-container">
+          {!verified ? (
+            // Step 1: Verify user identity
+            <form onSubmit={handleSubmit} className="forgot-password-form">
+              <div className="form-group">
+                <label>Username</label>
+                <input 
+                  type="text" 
+                  value={username} 
+                  onChange={(e) => setUsername(e.target.value)} 
+                  required 
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Date of Birth</label>
+                <input 
+                  type="date" 
+                  value={dob} 
+                  onChange={(e) => setDob(e.target.value)} 
+                  required 
+                />
+              </div>
+
+              <div className="button-group">
+                <button 
+                  type="submit"
+                  className="verify-button"
+                >
+                  Verify Identity
+                </button>
+                
+                <button 
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="back-button"
+                >
+                  Back to Login
+                </button>
+              </div>
+            </form>
+          ) : (
+            // Step 2: Reset password
+            <form onSubmit={handleResetPassword} className="forgot-password-form">
+              <div className="form-group">
+                <label>New Password</label>
+                <input 
+                  type="password" 
+                  value={newPassword} 
+                  onChange={(e) => setNewPassword(e.target.value)} 
+                  required 
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Confirm New Password</label>
+                <input 
+                  type="password" 
+                  value={confirmPassword} 
+                  onChange={(e) => setConfirmPassword(e.target.value)} 
+                  required 
+                />
+              </div>
+
+              <div className="button-group">
+                <button 
+                  type="submit"
+                  className="reset-button"
+                >
+                  Reset Password
+                </button>
+                
+                <button 
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

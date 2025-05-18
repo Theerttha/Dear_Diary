@@ -68,6 +68,14 @@ const getDarkerColor = (hexColor, percent = 0.3) => {
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 };
 
+// Trash can icon as SVG
+const TrashIcon = ({ fill = "currentColor" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill={fill} viewBox="0 0 16 16">
+    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+    <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+  </svg>
+);
+
 const Thoughts = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,6 +92,7 @@ const Thoughts = () => {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState({});
   const [selectedCategory, setSelectedCategory] = useState({});
   const [hoveredThoughtId, setHoveredThoughtId] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // Calculate theme colors based on the base color
@@ -104,9 +113,19 @@ const Thoughts = () => {
     };
   }, [color]);
 
+  // Handle window resize for responsive design
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchThoughts = async () => {
     try {
-      const response=await axios.get(`${apiUrl}/thoughts/`, {
+      const response = await axios.get(`${apiUrl}/thoughts/`, {
         withCredentials: true,
       });
       setThoughts(response.data);
@@ -280,6 +299,13 @@ const Thoughts = () => {
     }
   }, [categories]);
 
+  // Determine grid columns based on window width
+  const getGridColumns = () => {
+    if (windowWidth < 600) return "repeat(1, 1fr)";
+    if (windowWidth < 900) return "repeat(2, 1fr)";
+    return "repeat(auto-fill, minmax(280px, 1fr))";
+  };
+
   // Custom button styles
   const buttonStyle = {
     backgroundColor: theme.buttonBg,
@@ -309,6 +335,20 @@ const Thoughts = () => {
     boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
   };
 
+  // Icon button style
+  const iconButtonStyle = {
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "8px",
+    borderRadius: "50%",
+    transition: "background-color 0.2s",
+    color: theme.textColor === "#ffffff" ? "#ff8a8a" : "#d32f2f",
+  };
+
   return (
     <div style={{ 
       backgroundColor: theme.bgColor, 
@@ -321,16 +361,16 @@ const Thoughts = () => {
       <div style={{ 
         maxWidth: "1000px", 
         margin: "0 auto", 
-        padding: "40px 20px"
+        padding: windowWidth < 600 ? "20px 15px" : "40px 20px"
       }}>
         <header style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "40px"
+          marginBottom: windowWidth < 600 ? "20px" : "40px"
         }}>
           <h1 style={{ 
-            fontSize: "2.5rem",
+            fontSize: windowWidth < 600 ? "2rem" : "2.5rem",
             background: `linear-gradient(45deg, ${theme.baseColor}, ${theme.accentLight})`,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -361,7 +401,7 @@ const Thoughts = () => {
           <div style={{ 
             backgroundColor: theme.cardBg,
             borderRadius: "15px",
-            padding: "20px",
+            padding: windowWidth < 600 ? "15px" : "20px",
             marginBottom: "30px",
             boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
             transform: "translateY(0)",
@@ -411,14 +451,15 @@ const Thoughts = () => {
         {/* Masonry-style thoughts grid */}
         <div style={{ 
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "25px",
+          gridTemplateColumns: getGridColumns(),
+          gap: windowWidth < 600 ? "15px" : "25px",
           gridAutoFlow: "dense"
         }}>
           {Array.isArray(thoughts) && thoughts.length > 0 ? (
             thoughts.map((item) => {
               // Determine height class - make some thoughts taller for visual interest
-              const heightClass = Math.random() > 0.6 ? "tall" : "normal";
+              // On mobile, make all heights uniform for better layout
+              const heightClass = windowWidth > 600 && Math.random() > 0.6 ? "tall" : "normal";
               
               return (
                 <div 
@@ -426,19 +467,33 @@ const Thoughts = () => {
                   style={{ 
                     backgroundColor: theme.cardBg,
                     borderRadius: "12px",
-                    padding: "20px",
+                    padding: windowWidth < 600 ? "15px" : "20px",
                     boxShadow: hoveredThoughtId === item.id 
                       ? `0 15px 30px rgba(0, 0, 0, 0.2), 0 0 0 2px ${theme.accentLight}`
                       : "0 8px 20px rgba(0, 0, 0, 0.1)",
                     transition: "all 0.3s ease",
                     transform: hoveredThoughtId === item.id ? "translateY(-5px)" : "translateY(0)",
-                    gridRowEnd: heightClass === "tall" ? "span 2" : "span 1",
+                    gridRowEnd: (windowWidth > 600 && heightClass === "tall") ? "span 2" : "span 1",
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "space-between"
+                    justifyContent: "space-between",
+                    cursor: editingIds.has(item.id) ? "default" : "pointer"
                   }}
                   onMouseEnter={() => setHoveredThoughtId(item.id)}
                   onMouseLeave={() => setHoveredThoughtId(null)}
+                  onClick={(e) => {
+                    // Prevent starting edit mode when clicking on buttons or category tags
+                    if (
+                      e.target.tagName === 'BUTTON' || 
+                      e.target.tagName === 'svg' || 
+                      e.target.tagName === 'path' ||
+                      e.target.closest('.category-tag') ||
+                      editingIds.has(item.id)
+                    ) {
+                      return;
+                    }
+                    startEditing(item.id, item.thought);
+                  }}
                 >
                   {editingIds.has(item.id) ? (
                     // Edit mode
@@ -510,7 +565,8 @@ const Thoughts = () => {
                           }}>
                             {thoughtCategories[item.id].map((cat) => (
                               <span 
-                                key={cat.linkId} 
+                                key={cat.linkId}
+                                className="category-tag" 
                                 style={{ 
                                   backgroundColor: theme.accentLight,
                                   color: isLightColor(theme.accentLight) ? "#1f1f1f" : "#ffffff",
@@ -524,7 +580,10 @@ const Thoughts = () => {
                               >
                                 {cat.category}
                                 <button 
-                                  onClick={() => removeFromCategory(cat.linkId)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFromCategory(cat.linkId);
+                                  }}
                                   style={{
                                     background: "none",
                                     border: "none",
@@ -563,38 +622,30 @@ const Thoughts = () => {
                           display: "flex", 
                           gap: "10px", 
                           justifyContent: "space-between",
+                          alignItems: "center",
                           opacity: hoveredThoughtId === item.id ? 1 : 0.6,
                           transition: "opacity 0.3s ease"
                         }}>
-                          <div style={{ display: "flex", gap: "8px" }}>
+                          <div>
                             <button
-                              onClick={() => startEditing(item.id, item.thought)}
-                              style={{
-                                ...secondaryButtonStyle,
-                                padding: "6px 12px",
-                                fontSize: "0.9rem"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteThought(item.id);
                               }}
+                              style={iconButtonStyle}
+                              title="Delete thought"
                             >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => deleteThought(item.id)}
-                              style={{
-                                ...secondaryButtonStyle,
-                                padding: "6px 12px",
-                                fontSize: "0.9rem",
-                                backgroundColor: theme.textColor === "#ffffff" ? "#d32f2f" : "#ffcdd2",
-                                color: theme.textColor === "#ffffff" ? "#ffffff" : "#b71c1c"
-                              }}
-                            >
-                              Delete
+                              <TrashIcon fill={theme.textColor === "#ffffff" ? "#ff8a8a" : "#d32f2f"} />
                             </button>
                           </div>
                           
                           {/* Category dropdown */}
                           <div style={{ position: "relative" }}>
                             <button
-                              onClick={() => toggleCategoryDropdown(item.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCategoryDropdown(item.id);
+                              }}
                               style={{
                                 ...secondaryButtonStyle,
                                 padding: "6px 12px",
@@ -605,18 +656,21 @@ const Thoughts = () => {
                             </button>
                             
                             {showCategoryDropdown[item.id] && (
-                              <div style={{
-                                position: "absolute",
-                                zIndex: 10,
-                                right: 0,
-                                bottom: "calc(100% + 8px)",
-                                backgroundColor: theme.cardBg,
-                                border: `1px solid ${theme.accentLight}`,
-                                borderRadius: "10px",
-                                padding: "15px",
-                                minWidth: "220px",
-                                boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
-                              }}>
+                              <div 
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                  position: "absolute",
+                                  zIndex: 10,
+                                  right: 0,
+                                  bottom: "calc(100% + 8px)",
+                                  backgroundColor: theme.cardBg,
+                                  border: `1px solid ${theme.accentLight}`,
+                                  borderRadius: "10px",
+                                  padding: "15px",
+                                  minWidth: "220px",
+                                  boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
+                                }}
+                              >
                                 {getAvailableCategories(item.id).length > 0 ? (
                                   <>
                                     <select
@@ -645,7 +699,10 @@ const Thoughts = () => {
                                     </select>
                                     <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
                                       <button 
-                                        onClick={() => toggleCategoryDropdown(item.id)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleCategoryDropdown(item.id);
+                                        }}
                                         style={{
                                           ...secondaryButtonStyle,
                                           padding: "6px 12px",
@@ -655,7 +712,10 @@ const Thoughts = () => {
                                         Cancel
                                       </button>
                                       <button 
-                                        onClick={() => addToCategory(item.id, selectedCategory[item.id])}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          addToCategory(item.id, selectedCategory[item.id]);
+                                        }}
                                         style={{
                                           ...buttonStyle,
                                           padding: "6px 12px",
@@ -670,7 +730,10 @@ const Thoughts = () => {
                                   <>
                                     <p style={{ margin: "0 0 10px" }}>All categories have been added.</p>
                                     <button 
-                                      onClick={() => toggleCategoryDropdown(item.id)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleCategoryDropdown(item.id);
+                                      }}
                                       style={{
                                         ...secondaryButtonStyle,
                                         padding: "6px 12px",

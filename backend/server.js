@@ -20,10 +20,17 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({extended:true}),)
 app.use(
+  
   session({
     secret: "top_secret",
     resave: false,
     saveUninitialized: true,
+    /*
+    cookie: {
+  secure: false,
+  sameSite: "lax" // works for local testing
+},
+*/
     cookie: {
       secure: true,           // Must be true for HTTPS
       httpOnly: true,

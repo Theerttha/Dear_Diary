@@ -1,0 +1,194 @@
+/* Login.css */
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* Background with scattered words */
+.background-words {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.word {
+    position: absolute;
+    color: #000;
+    font-size: clamp(12px, 2vw, 24px);
+    opacity: 0.2;
+    font-family: 'Times New Roman', serif;
+    transform: rotate(var(--rotation));
+    font-weight: 500;
+}
+
+/* Positioning for each word */
+.background-words .word:nth-child(1) { top: 5%; left: 10%; --rotation: -15deg; }
+.background-words .word:nth-child(2) { top: 15%; left: 25%; --rotation: 5deg; }
+.background-words .word:nth-child(3) { top: 25%; left: 8%; --rotation: 12deg; }
+.background-words .word:nth-child(4) { top: 35%; left: 22%; --rotation: -8deg; }
+.background-words .word:nth-child(5) { top: 45%; left: 12%; --rotation: 20deg; }
+.background-words .word:nth-child(6) { top: 55%; left: 30%; --rotation: -25deg; }
+.background-words .word:nth-child(7) { top: 65%; left: 15%; --rotation: 15deg; }
+.background-words .word:nth-child(8) { top: 75%; left: 5%; --rotation: -12deg; }
+.background-words .word:nth-child(9) { top: 85%; left: 25%; --rotation: 8deg; }
+.background-words .word:nth-child(10) { top: 10%; left: 75%; --rotation: -18deg; }
+.background-words .word:nth-child(11) { top: 20%; left: 65%; --rotation: 10deg; }
+.background-words .word:nth-child(12) { top: 30%; left: 85%; --rotation: -5deg; }
+.background-words .word:nth-child(13) { top: 40%; left: 70%; --rotation: 22deg; }
+.background-words .word:nth-child(14) { top: 50%; left: 80%; --rotation: -15deg; }
+.background-words .word:nth-child(15) { top: 60%; left: 65%; --rotation: 5deg; }
+.background-words .word:nth-child(16) { top: 70%; left: 90%; --rotation: -20deg; }
+.background-words .word:nth-child(17) { top: 80%; left: 75%; --rotation: 15deg; }
+.background-words .word:nth-child(18) { top: 90%; left: 60%; --rotation: -10deg; }
+.background-words .word:nth-child(19) { top: 15%; left: 45%; --rotation: 12deg; }
+.background-words .word:nth-child(20) { top: 60%; left: 50%; --rotation: -8deg; }
+
+/* Login box styling */
+.login-box {
+    background-color: #000;
+    color: #fff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+
+/* Form styling */
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #000;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.login-button, .register-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+
+}
+.login-button{
+    padding-right: 30px;
+    padding-left: 30px;
+}
+.loginButtonBox{
+    justify-content: center;
+    display: grid;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.login-button:hover, .register-button:hover {
+    background-color: #e0e0e0;
+}
+
+.register-section {
+    display: grid;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.forgot-password a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #ff6b6b;
+    padding: 12px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid rgba(220, 53, 69, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-box {
+        padding: 30px 20px;
+    }
+    
+    .login-title {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding: 25px 15px;
+    }
+    
+    .login-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    .form-group input,
+    .login-button, 
+    .register-button {
+        padding: 10px;
+    }
+    
+    .register-section {
+        flex-direction: column;
+    }
+    
+    .register-button {
+        width: 100%;
+    }
+}

@@ -3,7 +3,7 @@ const express=require('express');
 const cors=require('cors');
 const session = require("express-session");
 const router=express.Router()
-const mysql=require('mysql');
+const mysql=require('mysql2');
 const db = require("../db");
 const bcrypt=require("bcryptjs");
 router.route('/')

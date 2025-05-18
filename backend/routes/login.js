@@ -4,7 +4,7 @@ const cors=require('cors');
 const session = require("express-session");
 const router=express.Router()
 
-const mysql=require('mysql');
+const mysql=require('mysql2');
 const db = require("../db");
 const bcrypt=require("bcryptjs");
 
@@ -27,7 +27,7 @@ router.route('/login')
     }
     const sql="Select password,color from userDetails where username like ?";
     db.query(sql,[req.body.username],async(err,data)=>{
-        if (err) return res.json(0);
+        if (err) return res.json(-1);
         else{
             if (data.length>0){
                 const isValid=await bcrypt.compare(req.body.password,data[0].password);
@@ -43,7 +43,7 @@ router.route('/login')
             }
                 
         }
-        return res.json(0);
+    return res.json(-2);
             
         
 })
