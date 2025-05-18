@@ -27,12 +27,12 @@ router.route('/login')
     }
     const sql="Select password,color from userDetails where username like ?";
     db.query(sql,[req.body.username],async(err,data)=>{
-        if (err) return res.json(-1);
+        if (err) return res.json(0);
         else{
             if (data.length>0){
                 const isValid=await bcrypt.compare(req.body.password,data[0].password);
                 if (!isValid){
-                    return res.json(0);
+                    return res.json(-1);
                 }
                 else{
                     req.session.user={username:req.body.username};
