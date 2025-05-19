@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
-import "./Notes.css";
+import "./notes.css";
 
 const Notes = () => {
     const location = useLocation();
